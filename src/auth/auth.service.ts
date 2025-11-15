@@ -9,7 +9,7 @@ import { AppConfig } from 'src/config/app.config';
 export interface AuthResponse {
   access_token: string;
   user: {
-    id: number;
+    id: string;
     name: string;
     email: string;
   };
@@ -24,7 +24,7 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginUserDto): Promise<AuthResponse> {
-    const user = await this.userService.findByEMail(loginDto.email);
+    const user = await this.userService.findByEmail(loginDto.email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -51,9 +51,9 @@ export class AuthService {
       user: userWithoutPassword,
     };
   }
-
+  
   async validateUser(userId: number) {
-    const user = await this.userService.findById(userId);
+    const user = await this.userService.findById(String(userId));
     if (!user) {
       throw new UnauthorizedException('User not found');
     }

@@ -1,28 +1,62 @@
 import { NotFoundException, UseGuards } from '@nestjs/common';
-import { Query, Resolver } from '@nestjs/graphql';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { Resolver, Args, Parent, ResolveField, Query } from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UserService } from './user.service';
 import { UserType } from './dto/user.type';
+import { AuthUserType } from './dto/auth-user.type';
 
 @Resolver(() => UserType)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Query(() => UserType, { name: 'me' })
-  async me(@CurrentUser() user: { id: number }): Promise<UserType> {
-    if (!user?.id) {
-      throw new NotFoundException('Authenticated user not found');
-    }
+  @Query(() => AuthUserType, { name: 'me' })
+  async me(@CurrentUser() user: { id: string }): Promise<AuthUserType> {
+    // Fetch only the necessary data for auth check (id, name, email)
+    const userRecord = await this.userService.findUserById(user.id);
 
-    const record = await this.userService.findById(user.id);
-    if (!record) {
-      throw new NotFoundException('User not found');
-    }
+    if (!userRecord) throw new NotFoundException('User not found');
 
-    const { password, ...rest } = record;
-    return rest as UserType;
+    // Return just the required fields for authentication check
+    return {
+      id: userRecord.id,
+      name: userRecord.name,
+      email: userRecord.email,
+    };
+  }
+
+  @Query(() => UserType, { name: 'user' })
+  async getUser(@Args('id') id: string): Promise<UserType> {
+    const record = await this.userService.getUserCoreData(id);
+    if (!record) throw new NotFoundException('User not found');
+    return record;
+  }
+
+  @ResolveField(() => [UserType])
+  async followers(
+    @Parent() user: UserType,
+    @Args('take', { type: () => Number, defaultValue: 10 }) take: number,
+    @Args('skip', { type: () => Number, defaultValue: 0 }) skip: number,
+  ) {
+    return this.userService.getFollowers(user.id, take, skip);
+  }
+
+  @ResolveField(() => [UserType])
+  async following(
+    @Parent() user: UserType,
+    @Args('take', { type: () => Number, defaultValue: 10 }) take: number,
+    @Args('skip', { type: () => Number, defaultValue: 0 }) skip: number,
+  ) {
+    return this.userService.getFollowing(user.id, take, skip);
+  }
+
+  @ResolveField(() => [UserType])
+  async posts(
+    @Parent() user: UserType,
+    @Args('take', { type: () => Number, defaultValue: 10 }) take: number,
+    @Args('skip', { type: () => Number, defaultValue: 0 }) skip: number,
+  ) {
+    return this.userService.getPosts(user.id, take, skip);
   }
 }
-

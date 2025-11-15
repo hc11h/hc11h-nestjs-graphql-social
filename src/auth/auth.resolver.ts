@@ -6,6 +6,7 @@ import { AuthPayload } from './models/auth-payload.model';
 import { UserService } from 'src/modules/user/user.service';
 import { UserType } from 'src/modules/user/dto/user.type';
 import { Public } from './decorators/public.decorator';
+import { AuthUserType } from 'src/modules/user/dto/auth-user.type';
 
 @Resolver()
 export class AuthResolver {
@@ -15,14 +16,23 @@ export class AuthResolver {
   ) { }
 
   @Public()
-  @Mutation(() => UserType, { name: 'register' })
-  async register(@Args('input') input: RegisterUserDto): Promise<UserType> {
+  @Mutation(() => AuthUserType, { name: 'register' })
+  async register(@Args('input') input: RegisterUserDto): Promise<AuthUserType> {
     return this.userService.createUser(input);
   }
 
   @Public()
   @Mutation(() => AuthPayload, { name: 'login' })
   async login(@Args('car') input: LoginUserDto): Promise<AuthPayload> {
-    return this.authService.login(input);
+     const { user, access_token } = await this.authService.login(input);
+
+    return {
+      access_token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+    };
   }
 }

@@ -8,8 +8,99 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String 
+  id         String   @id @default(uuid())
+  name       String
+  email      String   @unique
+  password   String
+
+  avatarUrl  String?
+  bio        String?
+  deleted    Boolean  @default(false)
+
+  followers  Follow[] @relation("followers")
+  following  Follow[] @relation("following")
+  posts      Post[]
+  likes      Like[]
+  notifications Notification[] @relation("UserNotifications")
+  actedNotifications Notification[] @relation("Actor")
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+}
+
+model Follow {
+  id          String   @id @default(uuid())
+  followerId  String
+  followingId String
+
+  follower    User     @relation("following", fields: [followerId], references: [id])
+  following   User     @relation("followers", fields: [followingId], references: [id])
+
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Post {
+  id            String   @id @default(uuid())
+  authorId      String
+  content       String
+  imageUrl      String?
+  deleted       Boolean  @default(false)
+
+  author        User     @relation(fields: [authorId], references: [id])
+  likes         Like[]
+  notifications Notification[]
+
+  likeCount     Int      @default(0)
+  commentCount  Int      @default(0)
+  hotScore      Float    @default(0)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([hotScore])
+}
+
+model Like {
+  id       String @id @default(uuid())
+  userId   String
+  postId   String
+
+  user     User @relation(fields: [userId], references: [id])
+  post     Post @relation(fields: [postId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+  @@index([userId])
+  @@index([postId])
+}
+
+model Notification {
+  id         String   @id @default(uuid())
+  type       NotificationType
+  actorId    String
+  recipientId String
+  postId     String?
+  read       Boolean  @default(false)
+
+  actor      User     @relation("Actor", fields: [actorId], references: [id])
+  recipient  User     @relation("UserNotifications", fields: [recipientId], references: [id])
+  post       Post?    @relation(fields: [postId], references: [id])
+
+  createdAt  DateTime @default(now())
+
+  @@index([recipientId])
+  @@index([actorId])
+  @@index([postId])
+}
+
+enum NotificationType {
+  FOLLOW
+  LIKE
+  COMMENT
 }

@@ -6,6 +6,18 @@ type User {
   id: ID!
   name: String!
   email: String!
+  followerCount: Float!
+  followingCount: Float!
+  postCount: Float!
+  followers(take: Float! = 10, skip: Float! = 0): [User!]!
+  following(take: Float! = 10, skip: Float! = 0): [User!]!
+  posts(take: Float! = 10, skip: Float! = 0): [User!]!
+}
+
+type AuthUser {
+  id: ID!
+  name: String!
+  email: String!
 }
 
 type AuthPayload {
@@ -14,11 +26,12 @@ type AuthPayload {
 }
 
 type Query {
-  me: User!
+  me: AuthUser!
+  user(id: String!): User!
 }
 
 type Mutation {
-  register(input: RegisterUserDto!): User!
+  register(input: RegisterUserDto!): AuthUser!
   login(car: LoginUserDto!): AuthPayload!
 }
 
