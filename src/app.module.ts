@@ -17,6 +17,7 @@ import { envValidationSchema } from './config/env.validation';
 import { FollowModule } from './modules/follow/follow.module';
 import { PostModule } from './modules/post/post.module';
 import { LikeModule } from './modules/like/like.module';
+import { NotificationsModule } from './modules/notification/notifications.module';
 
 @Global()
 @Module({
@@ -64,7 +65,7 @@ import { LikeModule } from './modules/like/like.module';
                 };
               }
             } else {
-                formatted.extensions = {
+              formatted.extensions = {
                 code: error.extensions?.code || 'INTERNAL_SERVER_ERROR',
               };
             }
@@ -80,6 +81,7 @@ import { LikeModule } from './modules/like/like.module';
     FollowModule,
     PostModule,
     LikeModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [

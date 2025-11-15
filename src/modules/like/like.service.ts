@@ -1,10 +1,15 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { calculateHotScore } from 'utils/hot-score';
+import { NotificationService } from '../notification/notification.service';
+import { NotificationTypeEnum } from '../notification/types/notification.type';
 
 @Injectable()
 export class LikeService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationService: NotificationService,
+  ) {}
 
   async likePost(userId: string, postId: string) {
     const post = await this.prisma.post.findUnique({
@@ -50,14 +55,12 @@ export class LikeService {
     });
 
     if (userId !== post.authorId) {
-      await this.prisma.notification.create({
-        data: {
-          type: 'LIKE',
-          actorId: userId,
-          recipientId: post.authorId,
-          postId: postId,
-        },
-      });
+      await this.notificationService.createNotification(
+        NotificationTypeEnum.LIKE,
+        userId,
+        post.authorId,
+        postId,
+      );
     }
 
     return like;

@@ -5,10 +5,15 @@ import {
 } from '@nestjs/common';
 import { FollowType } from './types/follow.type';
 import { PrismaService } from 'prisma/prisma.service';
+import { NotificationService } from '../notification/notification.service';
+import { NotificationTypeEnum } from '../notification/types/notification.type';
 
 @Injectable()
 export class FollowService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notificationService: NotificationService,
+  ) {}
 
   async followUser(followerId: string, followingId: string): Promise<void> {
     if (followerId === followingId) {
@@ -27,6 +32,12 @@ export class FollowService {
     await this.prisma.follow.create({
       data: { followerId, followingId },
     });
+
+    await this.notificationService.createNotification(
+      NotificationTypeEnum.FOLLOW,
+      followerId,
+      followingId,
+    );
   }
 
   async unfollowUser(
