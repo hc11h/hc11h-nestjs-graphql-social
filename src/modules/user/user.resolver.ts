@@ -27,8 +27,8 @@ export class UserResolver {
   }
 
   @Query(() => UserType, { name: 'user' })
-  async getUser(@Args('id') id: string): Promise<UserType> {
-    const record = await this.userService.getUserCoreData(id);
+  async getUser(@CurrentUser() currentUser: { id: string }): Promise<UserType> {
+    const record = await this.userService.getUserCoreData(currentUser.id);
     if (!record) throw new NotFoundException('User not found');
     return record;
   }

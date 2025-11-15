@@ -14,6 +14,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { envValidationSchema } from './config/env.validation';
+import { FollowModule } from './modules/follow/follow.module';
 
 @Global()
 @Module({
@@ -78,6 +79,7 @@ import { envValidationSchema } from './config/env.validation';
     }),
     AuthModule,
     UserModule,
+    FollowModule,
   ],
   controllers: [AppController],
   providers: [

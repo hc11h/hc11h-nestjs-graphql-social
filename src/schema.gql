@@ -25,14 +25,29 @@ type AuthPayload {
   user: User!
 }
 
+type FollowType {
+  user: User!
+  followedAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Query {
   me: AuthUser!
-  user(id: String!): User!
+  user: User!
+  followers(take: Float! = 10, skip: Float! = 0): [FollowType!]!
+  following(take: Float! = 10, skip: Float! = 0): [FollowType!]!
+  isFollowing(targetUserId: String!): Boolean!
 }
 
 type Mutation {
   register(input: RegisterUserDto!): AuthUser!
   login(car: LoginUserDto!): AuthPayload!
+  followUser(input: FollowUserInput!): Boolean!
+  unfollowUser(input: UnfollowUserInput!): Boolean!
 }
 
 input RegisterUserDto {
@@ -44,4 +59,12 @@ input RegisterUserDto {
 input LoginUserDto {
   email: String!
   password: String!
+}
+
+input FollowUserInput {
+  targetUserId: String!
+}
+
+input UnfollowUserInput {
+  targetUserId: String!
 }
