@@ -46,6 +46,13 @@ type PostType {
   author: User!
 }
 
+type LikeType {
+  id: ID!
+  userId: String!
+  postId: String!
+  createdAt: DateTime!
+}
+
 type Query {
   me: AuthUser!
   user: User!
@@ -64,6 +71,8 @@ type Mutation {
   unfollowUser(input: UnfollowUserInput!): Boolean!
   createPost(input: CreatePostInput!): PostType!
   deletePost(input: DeletePostInput!): Boolean!
+  likePost(data: LikePostInput!): LikeType!
+  unlikePost(postId: String!): Boolean!
 }
 
 input RegisterUserDto {
@@ -91,5 +100,9 @@ input CreatePostInput {
 }
 
 input DeletePostInput {
+  postId: String!
+}
+
+input LikePostInput {
   postId: String!
 }

@@ -9,25 +9,22 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Global prefix
   app.setGlobalPrefix('api', {
     exclude: ['health', ''],
   });
 
-  // Global validation pipe with proper configuration
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // Strip properties that don't have decorators
-      forbidNonWhitelisted: true, // Throw error if non-whitelisted properties are present
-      transform: true, // Automatically transform payloads to DTO instances
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
       transformOptions: {
-        enableImplicitConversion: true, // Enable implicit type conversion
+        enableImplicitConversion: true,
       },
-      disableErrorMessages: false, // Show detailed error messages
+      disableErrorMessages: false,
     }),
   );
 
-  // Global exception filters (order matters - more specific first)
   // if (process.env.NODE_ENV === 'production') {
   app.useGlobalFilters(new AllExceptionsFilter(), new HttpExceptionFilter());
   // }
@@ -38,7 +35,6 @@ async function bootstrap() {
   //   new TransformInterceptor(),
   // );
 
-  // Enable CORS if needed
   app.enableCors();
 
   const port = process.env.PORT ?? 3000;
