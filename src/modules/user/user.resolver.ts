@@ -13,12 +13,10 @@ export class UserResolver {
   @UseGuards(JwtAuthGuard)
   @Query(() => AuthUserType, { name: 'me' })
   async me(@CurrentUser() user: { id: string }): Promise<AuthUserType> {
-    // Fetch only the necessary data for auth check (id, name, email)
     const userRecord = await this.userService.findUserById(user.id);
 
     if (!userRecord) throw new NotFoundException('User not found');
 
-    // Return just the required fields for authentication check
     return {
       id: userRecord.id,
       name: userRecord.name,

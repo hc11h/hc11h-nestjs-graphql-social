@@ -7,9 +7,6 @@ import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // =====================
-  // Create User (Register)
-  // =====================
   async createUser(dto: RegisterUserDto) {
     const exists = await this.prisma.user.findUnique({
       where: { email: dto.email },
@@ -28,18 +25,12 @@ export class UserService {
     });
   }
 
-  // =====================
-  // Find User by ID (UUID)
-  // =====================
   async findUserById(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
     });
   }
 
-  // =====================
-  // Get Core User Data (With counts for followers, following, posts)
-  // =====================
   async getUserCoreData(id: string) {
     const user = await this.prisma.user.findUnique({
       where: { id },
@@ -65,9 +56,6 @@ export class UserService {
     };
   }
 
-  // =====================
-  // Get Followers with Pagination
-  // =====================
   async getFollowers(userId: string, take: number = 10, skip: number = 0) {
     const followers = await this.prisma.follow.findMany({
       where: { followingId: userId },
@@ -84,9 +72,6 @@ export class UserService {
     });
   }
 
-  // =====================
-  // Get Following with Pagination
-  // =====================
   async getFollowing(userId: string, take: number = 10, skip: number = 0) {
     const following = await this.prisma.follow.findMany({
       where: { followerId: userId },
@@ -103,9 +88,6 @@ export class UserService {
     });
   }
 
-  // =====================
-  // Get Posts with Pagination
-  // =====================
   async getPosts(userId: string, take: number = 10, skip: number = 0) {
     const posts = await this.prisma.post.findMany({
       where: { authorId: userId },
@@ -125,9 +107,6 @@ export class UserService {
     }));
   }
 
-  // =====================
-  // Helper Function to Find User by Email
-  // =====================
   async findByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: { email },
@@ -135,7 +114,6 @@ export class UserService {
   }
 
   async findById(id: string) {
-    // console.log(id);
     return this.prisma.user.findUnique({ where: { id } });
   }
 }

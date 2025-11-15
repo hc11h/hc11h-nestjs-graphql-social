@@ -132,21 +132,4 @@ export class FollowService {
     });
     return !!follow;
   }
-
-  //   // These methods don't need to be async since they don't use await
-  //   getFollowerCount(userId: string): Promise<number> {
-  //     return this.prisma.follow.count({
-  //       where: {
-  //         followingId: userId,
-  //       },
-  //     });
-  //   }
-
-  //   getFollowingCount(userId: string): Promise<number> {
-  //     return this.prisma.follow.count({
-  //       where: {
-  //         followerId: userId,
-  //       },
-  //     });
-  //   }
 }

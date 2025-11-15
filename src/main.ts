@@ -29,7 +29,7 @@ async function bootstrap() {
 
   // Global exception filters (order matters - more specific first)
   // if (process.env.NODE_ENV === 'production') {
-    app.useGlobalFilters(new AllExceptionsFilter(), new HttpExceptionFilter());
+  app.useGlobalFilters(new AllExceptionsFilter(), new HttpExceptionFilter());
   // }
 
   // Global interceptors

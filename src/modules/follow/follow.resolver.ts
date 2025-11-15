@@ -30,9 +30,6 @@ export class FollowResolver {
     return this.followService.unfollowUser(user.id, input.targetUserId);
   }
 
-  // ============================
-  // GET FOLLOWERS
-  // ============================
   @UseGuards(JwtAuthGuard)
   @Query(() => [FollowType])
   async followers(
@@ -43,9 +40,6 @@ export class FollowResolver {
     return this.followService.getFollowers(user.id, take, skip);
   }
 
-  //   // ============================
-  //   // GET FOLLOWING
-  //   // ============================
   @UseGuards(JwtAuthGuard)
   @Query(() => [FollowType])
   async following(

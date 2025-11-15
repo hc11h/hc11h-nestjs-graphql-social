@@ -15,6 +15,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { envValidationSchema } from './config/env.validation';
 import { FollowModule } from './modules/follow/follow.module';
+import { PostModule } from './modules/post/post.module';
 
 @Global()
 @Module({
@@ -48,7 +49,7 @@ import { FollowModule } from './modules/follow/follow.module';
           formatError: (error) => {
             // Format GraphQL errors in a clean, user-friendly way
             const isDevelopment = process.env.NODE_ENV !== 'production';
-            
+
             const formatted: any = {
               message: error.message,
               code: error.extensions?.code || 'INTERNAL_SERVER_ERROR',
@@ -80,6 +81,7 @@ import { FollowModule } from './modules/follow/follow.module';
     AuthModule,
     UserModule,
     FollowModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [
