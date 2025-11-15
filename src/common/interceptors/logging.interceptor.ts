@@ -24,26 +24,27 @@ export class LoggingInterceptor implements NestInterceptor {
       const args = gqlCtx.getArgs();
 
       this.logger.log(
-        `GraphQL Request: ${info.parentType.name}.${info.fieldName} - Args: ${JSON.stringify(args)}`
+        `GraphQL Request: ${info.parentType.name}.${info.fieldName} - Args: ${JSON.stringify(args)}`,
       );
 
       return next.handle().pipe(
         tap({
           next: () => {
             const delay = Date.now() - now;
-            this.logger.log(`GraphQL Response: ${info.fieldName} - Time: ${delay}ms`);
+            this.logger.log(
+              `GraphQL Response: ${info.fieldName} - Time: ${delay}ms`,
+            );
           },
           error: (error) => {
             const delay = Date.now() - now;
             this.logger.error(
-              `GraphQL Error: ${info.fieldName} - Time: ${delay}ms - Error: ${error.message}`
+              `GraphQL Error: ${info.fieldName} - Time: ${delay}ms - Error: ${error.message}`,
             );
-          }
-        })
+          },
+        }),
       );
     }
 
-    // REST fallback
     const req = context.switchToHttp().getRequest();
     const { method, url } = req;
 
@@ -55,13 +56,13 @@ export class LoggingInterceptor implements NestInterceptor {
           const res = context.switchToHttp().getResponse();
           const delay = Date.now() - now;
           this.logger.log(
-            `REST Response: ${method} ${url} - Status: ${res.statusCode} - Time: ${delay}ms`
+            `REST Response: ${method} ${url} - Status: ${res.statusCode} - Time: ${delay}ms`,
           );
         },
         error: (error) => {
           const delay = Date.now() - now;
           this.logger.error(
-            `REST Error: ${method} ${url} - Time: ${delay}ms - Error: ${error.message}`
+            `REST Error: ${method} ${url} - Time: ${delay}ms - Error: ${error.message}`,
           );
         },
       }),

@@ -34,7 +34,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
           : 'Internal server error';
     }
 
-    // Logging
     if (isGraphQL) {
       try {
         const gqlHost = GqlArgumentsHost.create(host);
@@ -52,7 +51,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
           exception instanceof Error ? exception.stack : undefined,
         );
       }
-      
+
       return;
     }
 

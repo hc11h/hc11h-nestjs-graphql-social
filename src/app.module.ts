@@ -16,6 +16,7 @@ import { join } from 'path';
 import { envValidationSchema } from './config/env.validation';
 import { FollowModule } from './modules/follow/follow.module';
 import { PostModule } from './modules/post/post.module';
+import { LikeModule } from './modules/like/like.module';
 
 @Global()
 @Module({
@@ -47,15 +48,12 @@ import { PostModule } from './modules/post/post.module';
           introspection: graphqlConfig?.introspection ?? true,
           context: ({ req, res }) => ({ req, res }),
           formatError: (error) => {
-            // Format GraphQL errors in a clean, user-friendly way
             const isDevelopment = process.env.NODE_ENV !== 'production';
 
             const formatted: any = {
               message: error.message,
               code: error.extensions?.code || 'INTERNAL_SERVER_ERROR',
             };
-
-            // Add debug information in development
             if (isDevelopment) {
               formatted.path = error.path;
               formatted.locations = error.locations;
@@ -66,8 +64,7 @@ import { PostModule } from './modules/post/post.module';
                 };
               }
             } else {
-              // In production, only include essential error information
-              formatted.extensions = {
+                formatted.extensions = {
                 code: error.extensions?.code || 'INTERNAL_SERVER_ERROR',
               };
             }
@@ -82,6 +79,7 @@ import { PostModule } from './modules/post/post.module';
     UserModule,
     FollowModule,
     PostModule,
+    LikeModule,
   ],
   controllers: [AppController],
   providers: [
